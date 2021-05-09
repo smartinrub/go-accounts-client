@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type Account struct {
@@ -63,13 +64,24 @@ func Fetch(accountId string) (string, int) {
 	return string(body), http.StatusOK
 }
 
-func Delete(accountId string) int {
-	_, err := http.NewRequest("DELETE", "http://localhost:8080/v1/organisation/accounts/"+accountId, nil)
+func Delete(accountId string, version int) int {
+	request, err := http.NewRequest(
+		"DELETE",
+		"http://localhost:8080/v1/organisation/accounts/"+accountId+"?version="+strconv.Itoa(version),
+		nil)
 
 	if err != nil {
 		log.Fatalln(err)
-		return http.StatusBadRequest
+		return http.StatusInternalServerError
 	}
+
+	body, err := ioutil.ReadAll(request.Response.Body)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Default(string(body))
 
 	return http.StatusNoContent
 }
