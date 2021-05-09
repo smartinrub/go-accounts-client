@@ -9,14 +9,28 @@ import (
 )
 
 type Account struct {
-	Country      string `json:"country"`
-	BaseCurrency string `json:"base_currency"`
-	BankId       string `json:"bank_id"`
+	Data Data `json:"data"`
+}
+
+type Data struct {
+	Type           string     `json:"type"`
+	Id             string     `json:"id"`
+	OrganizationId string     `json:"organization_id"`
+	Attributes     Attributes `json:"attributes"`
+}
+
+type Attributes struct {
+	Name         []string `json:"name"`
+	Country      string   `json:"country"`
+	BaseCurrency string   `json:"base_currency"`
+	BankId       string   `json:"bank_id"`
+	BankIdCode   string   `json:"bank_id_code"`
+	Bic          string   `json:"bic"`
 }
 
 func Create(account Account) (string, int) {
 	postBody, _ := json.Marshal(account)
-	response, err := http.Post("http://localhost:8080/v1/organisation/accounts/ad27e265-9605-4b4b-a0e5-3003ea9cc4dc", "application/json", bytes.NewBuffer(postBody))
+	response, err := http.Post("http://localhost:8080/v1/organisation/accounts", "application/json", bytes.NewBuffer(postBody))
 	if err != nil {
 		return err.Error(), http.StatusBadRequest
 	}
