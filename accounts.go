@@ -64,7 +64,7 @@ func Fetch(accountId string) (string, int) {
 	return string(body), http.StatusOK
 }
 
-func Delete(accountId string, version int) int {
+func Delete(accountId string, version int) (string, int) {
 	request, err := http.NewRequest(
 		"DELETE",
 		"http://localhost:8080/v1/organisation/accounts/"+accountId+"?version="+strconv.Itoa(version),
@@ -72,10 +72,18 @@ func Delete(accountId string, version int) int {
 
 	if err != nil {
 		log.Fatalln(err)
-		return http.StatusInternalServerError
+		return err.Error(), http.StatusInternalServerError
 	}
 
-	body, err := ioutil.ReadAll(request.Response.Body)
+	client := &http.Client{}
+	response, err := client.Do(request)
+
+	if err != nil {
+		log.Fatalln(err)
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
 		log.Fatalln(err)
@@ -83,5 +91,5 @@ func Delete(accountId string, version int) int {
 
 	log.Print(string(body))
 
-	return http.StatusNoContent
+	return string(body), http.StatusNoContent
 }
