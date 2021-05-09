@@ -29,11 +29,12 @@ type Attributes struct {
 	Bic          string   `json:"bic"`
 }
 
-func Create(account Account) (string, int) {
+func Create(account Account) (*Account, int) {
 	postBody, _ := json.Marshal(account)
 	response, err := http.Post("http://localhost:8080/v1/organisation/accounts", "application/json", bytes.NewBuffer(postBody))
 	if err != nil {
-		return err.Error(), http.StatusInternalServerError
+		log.Fatalln(err)
+		return nil, http.StatusInternalServerError
 	}
 
 	defer response.Body.Close()
@@ -44,13 +45,16 @@ func Create(account Account) (string, int) {
 		log.Fatalln(err)
 	}
 
-	return string(body), http.StatusCreated
+	var returnedAccount Account
+	json.Unmarshal([]byte(string(body)), &returnedAccount)
+
+	return &returnedAccount, http.StatusCreated
 }
 
-func Fetch(accountId string) (string, int) {
+func Fetch(accountId string) (*Account, int) {
 	response, err := http.Get("http://localhost:8080/v1/organisation/accounts/" + accountId)
 	if err != nil {
-		return err.Error(), http.StatusInternalServerError
+		return nil, http.StatusInternalServerError
 	}
 
 	defer response.Body.Close()
@@ -59,12 +63,16 @@ func Fetch(accountId string) (string, int) {
 
 	if err != nil {
 		log.Fatalln(err)
+		return nil, http.StatusInternalServerError
 	}
 
-	return string(body), http.StatusOK
+	var account Account
+	json.Unmarshal([]byte(string(body)), &account)
+
+	return &account, http.StatusOK
 }
 
-func Delete(accountId string, version int) (string, int) {
+func Delete(accountId string, version int) int {
 	request, err := http.NewRequest(
 		"DELETE",
 		"http://localhost:8080/v1/organisation/accounts/"+accountId+"?version="+strconv.Itoa(version),
@@ -72,7 +80,7 @@ func Delete(accountId string, version int) (string, int) {
 
 	if err != nil {
 		log.Fatalln(err)
-		return err.Error(), http.StatusInternalServerError
+		return http.StatusInternalServerError
 	}
 
 	client := &http.Client{}
@@ -80,16 +88,17 @@ func Delete(accountId string, version int) (string, int) {
 
 	if err != nil {
 		log.Fatalln(err)
-		return err.Error(), http.StatusInternalServerError
+		return http.StatusInternalServerError
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
 		log.Fatalln(err)
+		return http.StatusInternalServerError
 	}
 
 	log.Print(string(body))
 
-	return string(body), http.StatusNoContent
+	return http.StatusNoContent
 }
