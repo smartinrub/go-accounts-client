@@ -72,7 +72,11 @@ func Fetch(accountId string) (*Account, error) {
 	}
 
 	var account Account
-	json.Unmarshal([]byte(string(body)), &account)
+	e := json.Unmarshal([]byte(string(body)), &account)
+
+	if e != nil {
+		return nil, err
+	}
 
 	return &account, err
 }
