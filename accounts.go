@@ -29,12 +29,12 @@ type Attributes struct {
 	Bic          string   `json:"bic"`
 }
 
-func Create(account Account) (*Account, int) {
+func Create(account Account) (*Account, error) {
 	postBody, _ := json.Marshal(account)
 	response, err := http.Post("http://localhost:8080/v1/organisation/accounts", "application/json", bytes.NewBuffer(postBody))
 	if err != nil {
 		log.Fatalln(err)
-		return nil, http.StatusInternalServerError
+		return nil, err
 	}
 
 	defer response.Body.Close()
@@ -43,19 +43,23 @@ func Create(account Account) (*Account, int) {
 
 	if err != nil {
 		log.Fatalln(err)
-		return nil, http.StatusInternalServerError
+		return nil, err
 	}
 
 	var returnedAccount Account
-	json.Unmarshal([]byte(string(body)), &returnedAccount)
+	e := json.Unmarshal([]byte(string(body)), &returnedAccount)
 
-	return &returnedAccount, http.StatusCreated
+	if e != nil {
+		return nil, err
+	}
+
+	return &returnedAccount, err
 }
 
-func Fetch(accountId string) (*Account, int) {
+func Fetch(accountId string) (*Account, error) {
 	response, err := http.Get("http://localhost:8080/v1/organisation/accounts/" + accountId)
 	if err != nil {
-		return nil, http.StatusInternalServerError
+		return nil, err
 	}
 
 	defer response.Body.Close()
@@ -64,16 +68,16 @@ func Fetch(accountId string) (*Account, int) {
 
 	if err != nil {
 		log.Fatalln(err)
-		return nil, http.StatusInternalServerError
+		return nil, err
 	}
 
 	var account Account
 	json.Unmarshal([]byte(string(body)), &account)
 
-	return &account, http.StatusOK
+	return &account, err
 }
 
-func Delete(accountId string, version int) int {
+func Delete(accountId string, version int) error {
 	request, err := http.NewRequest(
 		"DELETE",
 		"http://localhost:8080/v1/organisation/accounts/"+accountId+"?version="+strconv.Itoa(version),
@@ -81,7 +85,7 @@ func Delete(accountId string, version int) int {
 
 	if err != nil {
 		log.Fatalln(err)
-		return http.StatusInternalServerError
+		return err
 	}
 
 	client := &http.Client{}
@@ -89,17 +93,17 @@ func Delete(accountId string, version int) int {
 
 	if err != nil {
 		log.Fatalln(err)
-		return http.StatusInternalServerError
+		return err
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
 		log.Fatalln(err)
-		return http.StatusInternalServerError
+		return err
 	}
 
 	log.Print(string(body))
 
-	return http.StatusNoContent
+	return nil
 }
