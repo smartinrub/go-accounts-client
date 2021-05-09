@@ -49,6 +49,8 @@ func Create(account Account) (*Account, error) {
 	var returnedAccount Account
 	e := json.Unmarshal([]byte(string(body)), &returnedAccount)
 
+	log.Println(string(body))
+
 	if e != nil {
 		return nil, err
 	}
@@ -73,6 +75,8 @@ func Fetch(accountId string) (*Account, error) {
 
 	var account Account
 	e := json.Unmarshal([]byte(string(body)), &account)
+
+	log.Println(string(body))
 
 	if e != nil {
 		return nil, err
