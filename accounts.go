@@ -15,7 +15,7 @@ type Account struct {
 type Data struct {
 	Type           string     `json:"type"`
 	Id             string     `json:"id"`
-	OrganizationId string     `json:"organization_id"`
+	OrganizationId string     `json:"organisation_id"`
 	Attributes     Attributes `json:"attributes"`
 }
 
