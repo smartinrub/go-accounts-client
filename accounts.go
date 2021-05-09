@@ -43,6 +43,7 @@ func Create(account Account) (*Account, int) {
 
 	if err != nil {
 		log.Fatalln(err)
+		return nil, http.StatusInternalServerError
 	}
 
 	var returnedAccount Account
