@@ -32,7 +32,7 @@ func Create(account Account) (string, int) {
 	postBody, _ := json.Marshal(account)
 	response, err := http.Post("http://localhost:8080/v1/organisation/accounts", "application/json", bytes.NewBuffer(postBody))
 	if err != nil {
-		return err.Error(), http.StatusBadRequest
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	defer response.Body.Close()
@@ -49,7 +49,7 @@ func Create(account Account) (string, int) {
 func Fetch(accountId string) (string, int) {
 	response, err := http.Get("http://localhost:8080/v1/organisation/accounts/" + accountId)
 	if err != nil {
-		return err.Error(), http.StatusBadRequest
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	defer response.Body.Close()
@@ -63,20 +63,13 @@ func Fetch(accountId string) (string, int) {
 	return string(body), http.StatusOK
 }
 
-func Delete(accountId string) (string, int) {
-	response, err := http.NewRequest("DELETE", "http://localhost:8080/v1/organisation/accounts/"+accountId, nil)
-
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
-	}
-
-	defer response.Body.Close()
-
-	body, err := ioutil.ReadAll(response.Body)
+func Delete(accountId string) int {
+	_, err := http.NewRequest("DELETE", "http://localhost:8080/v1/organisation/accounts/"+accountId, nil)
 
 	if err != nil {
 		log.Fatalln(err)
+		return http.StatusBadRequest
 	}
 
-	return string(body), http.StatusNoContent
+	return http.StatusNoContent
 }
