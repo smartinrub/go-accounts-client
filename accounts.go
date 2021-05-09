@@ -63,6 +63,20 @@ func Fetch(accountId string) (string, int) {
 	return string(body), http.StatusOK
 }
 
-func Delete() {
+func Delete(accountId string) (string, int) {
+	response, err := http.NewRequest("DELETE", "http://localhost:8080/v1/organisation/accounts/"+accountId, nil)
 
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return string(body), http.StatusNoContent
 }
