@@ -81,7 +81,7 @@ func Delete(accountId string, version int) int {
 		log.Fatalln(err)
 	}
 
-	log.Default(string(body))
+	log.Print(string(body))
 
 	return http.StatusNoContent
 }
