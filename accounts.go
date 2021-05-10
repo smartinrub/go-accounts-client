@@ -118,12 +118,17 @@ func Delete(accountId string, version int) error {
 		return err
 	}
 
+	if response.StatusCode == 404 {
+		err = errors.New("Account " + accountId + " not found")
+		return err
+	}
+
 	if response.StatusCode != 204 {
 		err = errors.New(string(body))
 		return err
 	}
 
-	log.Print("Account " + accountId + "deleted at " + string(body))
+	log.Println("Account " + accountId + "deleted at " + string(body))
 
 	return nil
 }
