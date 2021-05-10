@@ -49,11 +49,14 @@ func Create(account Account) (*Account, error) {
 	}
 
 	var returnedAccount Account
-	e := json.Unmarshal([]byte(string(body)), &returnedAccount)
+	err2 := json.Unmarshal([]byte(string(body)), &returnedAccount)
 
-	log.Println(string(body))
+	if err2 != nil {
+		return nil, err2
+	}
 
-	if e != nil {
+	if reflect.DeepEqual(account, Account{}) {
+		err = errors.New("can’t unmarshal JSON object into struct")
 		return nil, err
 	}
 
