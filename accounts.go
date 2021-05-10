@@ -3,9 +3,11 @@ package accounts
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
 	"strconv"
 )
 
@@ -74,11 +76,14 @@ func Fetch(accountId string) (*Account, error) {
 	}
 
 	var account Account
-	e := json.Unmarshal([]byte(string(body)), &account)
+	err2 := json.Unmarshal([]byte(string(body)), &account)
 
-	log.Println(string(body))
+	if err2 != nil {
+		return nil, err2
+	}
 
-	if e != nil {
+	if reflect.DeepEqual(account, Account{}) {
+		err = errors.New("can’t unmarshal JSON object into struct")
 		return nil, err
 	}
 
