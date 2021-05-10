@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"reflect"
 	"strconv"
 )
 
@@ -55,7 +54,7 @@ func Create(account Account) (*Account, error) {
 		return nil, err2
 	}
 
-	if reflect.DeepEqual(account, Account{}) {
+	if response.StatusCode != 201 {
 		err = errors.New(string(body))
 		return nil, err
 	}
@@ -85,7 +84,7 @@ func Fetch(accountId string) (*Account, error) {
 		return nil, err2
 	}
 
-	if reflect.DeepEqual(account, Account{}) {
+	if response.StatusCode != 200 {
 		err = errors.New(string(body))
 		return nil, err
 	}
@@ -116,6 +115,11 @@ func Delete(accountId string, version int) error {
 
 	if err != nil {
 		log.Fatalln(err)
+		return err
+	}
+
+	if response.StatusCode != 204 {
+		err = errors.New(string(body))
 		return err
 	}
 
