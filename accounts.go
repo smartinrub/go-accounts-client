@@ -56,7 +56,7 @@ func Create(account Account) (*Account, error) {
 	}
 
 	if reflect.DeepEqual(account, Account{}) {
-		err = errors.New("can’t unmarshal JSON object into struct")
+		err = errors.New(string(body))
 		return nil, err
 	}
 
@@ -86,7 +86,7 @@ func Fetch(accountId string) (*Account, error) {
 	}
 
 	if reflect.DeepEqual(account, Account{}) {
-		err = errors.New("can’t unmarshal JSON object into struct")
+		err = errors.New(string(body))
 		return nil, err
 	}
 
@@ -119,7 +119,7 @@ func Delete(accountId string, version int) error {
 		return err
 	}
 
-	log.Print(string(body))
+	log.Print("Account " + accountId + "deleted at " + string(body))
 
 	return nil
 }
