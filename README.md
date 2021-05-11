@@ -16,3 +16,12 @@ The user of this libary can pull a new version by running:
 ## Usage/Examples
 
 You can see how to use this libary in [go-accounts-client-consumer](https://github.com/smartinrub/go-accounts-client-consumer).
+
+
+## Running Tests
+
+To run tests, run the following command
+
+```bash
+  go test
+```
