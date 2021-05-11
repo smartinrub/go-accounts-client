@@ -30,9 +30,14 @@ type Attributes struct {
 	Bic          string   `json:"bic"`
 }
 
-func Create(account Account) (*Account, error) {
+type API struct {
+	Client  *http.Client
+	baseURL string
+}
+
+func (api *API) Create(account Account) (*Account, error) {
 	postBody, _ := json.Marshal(account)
-	response, err := http.Post("http://localhost:8080/v1/organisation/accounts", "application/json", bytes.NewBuffer(postBody))
+	response, err := api.Client.Post(api.baseURL+"/v1/organisation/accounts", "application/json", bytes.NewBuffer(postBody))
 	if err != nil {
 		log.Fatalln(err)
 		return nil, err
@@ -62,8 +67,8 @@ func Create(account Account) (*Account, error) {
 	return &returnedAccount, err
 }
 
-func Fetch(accountId string) (*Account, error) {
-	response, err := http.Get("http://localhost:8080/v1/organisation/accounts/" + accountId)
+func (api *API) Fetch(accountId string) (*Account, error) {
+	response, err := api.Client.Get(api.baseURL + "/v1/organisation/accounts/" + accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -92,10 +97,10 @@ func Fetch(accountId string) (*Account, error) {
 	return &account, err
 }
 
-func Delete(accountId string, version int) error {
+func (api *API) Delete(accountId string, version int) error {
 	request, err := http.NewRequest(
 		"DELETE",
-		"http://localhost:8080/v1/organisation/accounts/"+accountId+"?version="+strconv.Itoa(version),
+		api.baseURL+"/v1/organisation/accounts/"+accountId+"?version="+strconv.Itoa(version),
 		nil)
 
 	if err != nil {
@@ -103,8 +108,7 @@ func Delete(accountId string, version int) error {
 		return err
 	}
 
-	client := &http.Client{}
-	response, err := client.Do(request)
+	response, err := api.Client.Do(request)
 
 	if err != nil {
 		log.Fatalln(err)
