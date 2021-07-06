@@ -39,7 +39,7 @@ func (api *API) Create(account Account) (*Account, error) {
 	postBody, _ := json.Marshal(account)
 	response, err := api.Client.Post(api.baseURL+"/v1/organisation/accounts", "application/json", bytes.NewBuffer(postBody))
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -48,7 +48,7 @@ func (api *API) Create(account Account) (*Account, error) {
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -59,7 +59,7 @@ func (api *API) Create(account Account) (*Account, error) {
 		return nil, err2
 	}
 
-	if response.StatusCode != 201 {
+	if response.StatusCode != http.StatusCreated {
 		err = errors.New(string(body))
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func (api *API) Fetch(accountId string) (*Account, error) {
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func (api *API) Fetch(accountId string) (*Account, error) {
 		return nil, err2
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		err = errors.New(string(body))
 		return nil, err
 	}
@@ -104,30 +104,30 @@ func (api *API) Delete(accountId string, version int) error {
 		nil)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return err
 	}
 
 	response, err := api.Client.Do(request)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return err
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return err
 	}
 
-	if response.StatusCode == 404 {
+	if response.StatusCode == http.StatusNotFound {
 		err = errors.New("Account " + accountId + " not found")
 		return err
 	}
 
-	if response.StatusCode != 204 {
+	if response.StatusCode != http.StatusNoContent {
 		err = errors.New(string(body))
 		return err
 	}

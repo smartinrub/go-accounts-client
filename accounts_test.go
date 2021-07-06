@@ -33,7 +33,7 @@ func TestCreateAccount(t *testing.T) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		rw.WriteHeader(201)
+		rw.WriteHeader(http.StatusCreated)
 		rw.Write(json)
 	}))
 	defer server.Close()
@@ -68,7 +68,7 @@ func TestFetchAccount(t *testing.T) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		rw.WriteHeader(200)
+		rw.WriteHeader(http.StatusOK)
 		rw.Write(json)
 	}))
 	defer server.Close()
@@ -103,7 +103,7 @@ func TestDeleteAccount(t *testing.T) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		rw.WriteHeader(204)
+		rw.WriteHeader(http.StatusNoContent)
 		rw.Write(json)
 	}))
 	defer server.Close()
