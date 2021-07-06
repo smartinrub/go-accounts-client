@@ -31,7 +31,7 @@ func TestCreateAccount(t *testing.T) {
 		assert.Equal(t, req.URL.String(), "/v1/organisation/accounts")
 		json, err := json.Marshal(account)
 		if err != nil {
-			log.Fatalln(err)
+			log.Println(err)
 		}
 		rw.WriteHeader(http.StatusCreated)
 		rw.Write(json)
@@ -66,7 +66,7 @@ func TestFetchAccount(t *testing.T) {
 		assert.Equal(t, req.URL.String(), "/v1/organisation/accounts/ad27e265-9605-4b4b-a0e5-3003ea9cc4dc")
 		json, err := json.Marshal(account)
 		if err != nil {
-			log.Fatalln(err)
+			log.Println(err)
 		}
 		rw.WriteHeader(http.StatusOK)
 		rw.Write(json)
@@ -101,7 +101,7 @@ func TestDeleteAccount(t *testing.T) {
 		assert.Equal(t, req.URL.String(), "/v1/organisation/accounts/ad27e265-9605-4b4b-a0e5-3003ea9cc4dc?version=0")
 		json, err := json.Marshal(account)
 		if err != nil {
-			log.Fatalln(err)
+			log.Println(err)
 		}
 		rw.WriteHeader(http.StatusNoContent)
 		rw.Write(json)
